@@ -7,14 +7,22 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app-shell">
+  <div class="login-box" id="login-box">
+    <h2>POS Login</h2>
+    <input id="username" value="cashier" placeholder="Username" />
+    <input id="password" value="cashier123" type="password" placeholder="Password" />
+    <button id="login-btn">Login</button>
+    <p class="hint">Demo users: cashier / manager / admin</p>
+  </div>
+
+  <div id="app" class="hidden">
     <header class="topbar">
       <div>
         <h1>Supermarket POS MVP</h1>
       </div>
-      <div class="tabs">
-        <button class="tab active" data-tab="foh">FOH</button>
-        <button class="tab" data-tab="boh">BOH</button>
+      <div class="user-info">
+        <span id="user-label">User</span>
+        <button id="logout-btn">Logout</button>
       </div>
     </header>
 
