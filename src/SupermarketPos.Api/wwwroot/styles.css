@@ -1,119 +1,281 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Supermarket POS</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="login-box" id="login-box">
-    <h2>POS Login</h2>
-    <input id="username" value="cashier" placeholder="Username" />
-    <input id="password" value="cashier123" type="password" placeholder="Password" />
-    <button id="login-btn">Login</button>
-    <p class="hint">Demo users: cashier / manager / admin</p>
-  </div>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Segoe UI, Tahoma, sans-serif;
+  background: #f3f6fb;
+  color: #1d2433;
+}
 
-  <div id="app" class="hidden">
-    <header class="topbar">
-      <div>
-        <h1>Supermarket POS MVP</h1>
-      </div>
-      <div class="user-info">
-        <span id="user-label">User</span>
-        <button id="logout-btn">Logout</button>
-      </div>
-    </header>
+.hidden { display: none; }
 
-    <nav class="tabbar">
-      <button class="tab active" data-tab="foh">FOH</button>
-      <button class="tab" data-tab="boh">BOH</button>
-      <button class="tab" data-tab="suppliers">Suppliers</button>
-    </nav>
+.login-box {
+  max-width: 420px;
+  margin: 100px auto;
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
 
-    <main>
-      <section id="foh-tab" class="tab-panel active">
-        <div class="panel-row">
-          <div class="panel product-panel">
-            <h2>Products</h2>
-            <div class="toolbar">
-              <input id="product-search" type="text" placeholder="Search products..." />
-            </div>
-            <div id="product-list" class="product-list"></div>
-          </div>
+.login-box h2 { margin-top: 0; }
 
-          <div class="panel cart-panel">
-            <h2>Current Sale</h2>
-            <div class="cart-meta">
-              <input id="customer-name" type="text" placeholder="Customer name" />
-              <select id="payment-method">
-                <option>Cash</option>
-                <option>Card</option>
-                <option>Wallet</option>
-              </select>
-            </div>
-            <div id="cart-items" class="cart-items"></div>
+.login-box input,
+.login-box button,
+.toolbar input,
+.cart-meta input,
+.cart-meta select,
+.product-form input,
+.product-form button {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccd7ec;
+  font-size: 1rem;
+}
 
-            <div class="totals">
-              <div><span>Subtotal</span><strong id="subtotal">0.00</strong></div>
-              <div><span>Tax (8%)</span><strong id="tax">0.00</strong></div>
-              <div class="grand"><span>Total</span><strong id="total">0.00</strong></div>
-            </div>
+.login-box button, .primary-btn, .secondary-btn, .tab, .product-item button, .cart-action, #logout-btn {
+  cursor: pointer;
+}
 
-            <button id="checkout-btn" class="primary-btn">Process Checkout</button>
-            <div id="receipt-output" class="receipt-output"></div>
-          </div>
-        </div>
-      </section>
+#login-btn, .primary-btn {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  font-weight: 600;
+}
 
-      <section id="boh-tab" class="tab-panel">
-        <div class="dashboard-grid">
-          <div class="metric-box">
-            <label>Total Products</label>
-            <strong id="metric-products">0</strong>
-          </div>
-          <div class="metric-box">
-            <label>Low Stock Items</label>
-            <strong id="metric-low-stock">0</strong>
-          </div>
-          <div class="metric-box">
-            <label>Total Stock</label>
-            <strong id="metric-stock">0</strong>
-          </div>
-          <div class="metric-box">
-            <label>Weekly Sales</label>
-            <strong id="metric-sales">0</strong>
-          </div>
-        </div>
+.secondary-btn {
+  background: #e5e7eb;
+  color: #1f2937;
+  border: none;
+  font-weight: 600;
+}
 
-        <div class="panel-row">
-          <div class="panel">
-            <h2>Inventory</h2>
-            <div id="inventory-list" class="inventory-list"></div>
-          </div>
-          <div class="panel">
-            <h2>Sales Summary</h2>
-            <div id="summary-list" class="summary-list"></div>
-          </div>
-        </div>
-      </section>
+#app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px;
+}
 
-      <section id="suppliers-tab" class="tab-panel">
-        <div class="supplier-layout">
-          <div class="panel">
-            <h2>Supplier Directory</h2>
-            <div id="supplier-list" class="supplier-list"></div>
-          </div>
-          <div class="panel">
-            <h2>Purchase Orders</h2>
-            <div id="purchase-order-list" class="purchase-order-list"></div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
 
-  <script src="app.js"></script>
-</body>
-</html>
+.topbar h1 { margin: 0; font-size: 2rem; }
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#logout-btn {
+  border: none;
+  background: #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.tabbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  border: none;
+  background: #e8edf8;
+  color: #2d3d5c;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.tab.active {
+  background: #1d4ed8;
+  color: white;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-row, .supplier-layout, .product-management-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 18px;
+}
+
+.panel {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.product-list,
+.cart-items,
+.inventory-list,
+.summary-list,
+.supplier-list,
+.purchase-order-list,
+.product-management-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-item,
+.cart-item,
+.inventory-item,
+.summary-item,
+.supplier-item,
+.purchase-order-item,
+.product-management-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5ebf5;
+  background: #f9fbff;
+  border-radius: 10px;
+}
+
+.product-item h4,
+.cart-item h4,
+.inventory-item h4,
+.summary-item h4,
+.supplier-item h4,
+.purchase-order-item h4,
+.product-management-item h4 {
+  margin: 0 0 4px;
+}
+
+.product-item small,
+.cart-item small,
+.inventory-item small,
+.summary-item small,
+.supplier-item small,
+.purchase-order-item small,
+.product-management-item small {
+  color: #596882;
+}
+
+.product-item button,
+.cart-action,
+.product-management-item button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.cart-action {
+  background: #ef4444;
+}
+
+.totals {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+}
+
+.totals .grand {
+  font-size: 1.3rem;
+  border-top: 1px solid #e5ebf5;
+  padding-top: 12px;
+}
+
+.receipt-output {
+  margin-top: 16px;
+  background: #f9fafb;
+  border: 1px solid #dfe8f5;
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 60px;
+  white-space: pre-wrap;
+  font-size: 0.94rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.metric-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.metric-box label {
+  color: #596882;
+  margin-bottom: 8px;
+}
+
+.metric-box strong { font-size: 2rem; }
+
+.low-stock {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.hint {
+  color: #596882;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.badge {
+  background: #e0f2fe;
+  color: #0f172a;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.checkbox-row input {
+  width: auto;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .panel-row, .dashboard-grid, .supplier-layout, .product-management-grid { grid-template-columns: 1fr; }
+}

@@ -1,16 +1,170 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SupermarketPos.Api.Data;
+using SupermarketPos.Api.Models;
+
+namespace SupermarketPos.Api.Controllers;
+
+[ApiController]
+[Route("api/product-management")]
+[Authorize]
+public class ProductManagementController : ControllerBase
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=supermarket.db"
-  },
-  "Jwt": {
-    "Key": "supermarket-pos-demo-key-please-change-me",
-    "Issuer": "SupermarketPos"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
+    private readonly AppDbContext _db;
+
+    public ProductManagementController(AppDbContext db)
+    {
+        _db = db;
     }
-  },
-  "AllowedHosts": "*"
+
+    [HttpGet("products")]
+    public async Task<ActionResult> GetProducts()
+    {
+        var products = await _db.Products
+            .Include(p => p.Inventory)
+            .OrderBy(p => p.Name)
+            .Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Sku,
+                p.Category,
+                p.CostPrice,
+                p.SellingPrice,
+                p.ReorderLevel,
+                p.IsActive,
+                Quantity = p.Inventory != null ? p.Inventory.QuantityOnHand : 0,
+                p.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(products);
+    }
+
+    [HttpPost("products")]
+    [Authorize(Roles = "Manager,Admin")]
+    public async Task<ActionResult> CreateProduct([FromBody] CreateProductRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name))
+            return BadRequest(new { error = "Product name is required." });
+
+        if (string.IsNullOrWhiteSpace(request.Sku))
+            return BadRequest(new { error = "Product SKU is required." });
+
+        var exists = await _db.Products.AnyAsync(p => p.Sku == request.Sku);
+        if (exists)
+            return BadRequest(new { error = "A product with this SKU already exists." });
+
+        var product = new Product
+        {
+            Name = request.Name,
+            Sku = request.Sku,
+            Category = request.Category,
+            CostPrice = request.CostPrice,
+            SellingPrice = request.SellingPrice,
+            ReorderLevel = request.ReorderLevel,
+            IsActive = request.IsActive,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _db.Products.Add(product);
+        await _db.SaveChangesAsync();
+
+        var inventory = new InventoryRecord
+        {
+            ProductId = product.Id,
+            QuantityOnHand = request.QuantityOnHand
+        };
+
+        _db.InventoryRecords.Add(inventory);
+        await _db.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, new { product.Id, product.Name });
+    }
+
+    [HttpPut("products/{id}")]
+    [Authorize(Roles = "Manager,Admin")]
+    public async Task<ActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequest request)
+    {
+        var product = await _db.Products
+            .Include(p => p.Inventory)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product is null)
+            return NotFound(new { error = "Product not found." });
+
+        if (!string.IsNullOrWhiteSpace(request.Name))
+            product.Name = request.Name;
+        if (!string.IsNullOrWhiteSpace(request.Sku))
+            product.Sku = request.Sku;
+        if (!string.IsNullOrWhiteSpace(request.Category))
+            product.Category = request.Category;
+        if (request.CostPrice.HasValue)
+            product.CostPrice = request.CostPrice.Value;
+        if (request.SellingPrice.HasValue)
+            product.SellingPrice = request.SellingPrice.Value;
+        if (request.ReorderLevel.HasValue)
+            product.ReorderLevel = request.ReorderLevel.Value;
+        if (request.IsActive.HasValue)
+            product.IsActive = request.IsActive.Value;
+
+        if (request.QuantityOnHand.HasValue)
+        {
+            if (product.Inventory is null)
+            {
+                product.Inventory = new InventoryRecord
+                {
+                    ProductId = product.Id,
+                    QuantityOnHand = request.QuantityOnHand.Value
+                };
+                _db.InventoryRecords.Add(product.Inventory);
+            }
+            else
+            {
+                product.Inventory.QuantityOnHand = request.QuantityOnHand.Value;
+            }
+        }
+
+        await _db.SaveChangesAsync();
+        return Ok(new { message = "Product updated successfully." });
+    }
+
+    [HttpDelete("products/{id}")]
+    [Authorize(Roles = "Manager,Admin")]
+    public async Task<ActionResult> DeleteProduct(int id)
+    {
+        var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);
+        if (product is null)
+            return NotFound(new { error = "Product not found." });
+
+        product.IsActive = false;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Product deactivated." });
+    }
+}
+
+public class CreateProductRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Sku { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public decimal CostPrice { get; set; }
+    public decimal SellingPrice { get; set; }
+    public int ReorderLevel { get; set; }
+    public int QuantityOnHand { get; set; }
+    public bool IsActive { get; set; } = true;
+}
+
+public class UpdateProductRequest
+{
+    public string? Name { get; set; }
+    public string? Sku { get; set; }
+    public string? Category { get; set; }
+    public decimal? CostPrice { get; set; }
+    public decimal? SellingPrice { get; set; }
+    public int? ReorderLevel { get; set; }
+    public int? QuantityOnHand { get; set; }
+    public bool? IsActive { get; set; }
 }
