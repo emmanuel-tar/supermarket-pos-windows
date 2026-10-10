@@ -26,6 +26,12 @@
       </div>
     </header>
 
+    <nav class="tabbar">
+      <button class="tab active" data-tab="foh">FOH</button>
+      <button class="tab" data-tab="boh">BOH</button>
+      <button class="tab" data-tab="suppliers">Suppliers</button>
+    </nav>
+
     <main>
       <section id="foh-tab" class="tab-panel active">
         <div class="panel-row">
@@ -89,6 +95,19 @@
           <div class="panel">
             <h2>Sales Summary</h2>
             <div id="summary-list" class="summary-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="suppliers-tab" class="tab-panel">
+        <div class="supplier-layout">
+          <div class="panel">
+            <h2>Supplier Directory</h2>
+            <div id="supplier-list" class="supplier-list"></div>
+          </div>
+          <div class="panel">
+            <h2>Purchase Orders</h2>
+            <div id="purchase-order-list" class="purchase-order-list"></div>
           </div>
         </div>
       </section>

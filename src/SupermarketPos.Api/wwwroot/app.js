@@ -17,9 +17,7 @@ body {
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
-.login-box h2 {
-  margin-top: 0;
-}
+.login-box h2 { margin-top: 0; }
 
 .login-box input,
 .login-box button,
@@ -45,7 +43,6 @@ body {
   font-weight: 600;
 }
 
-.app-shell,
 #app {
   max-width: 1400px;
   margin: 0 auto;
@@ -63,10 +60,7 @@ body {
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
-.topbar h1 {
-  margin: 0;
-  font-size: 2rem;
-}
+.topbar h1 { margin: 0; font-size: 2rem; }
 
 .user-info {
   display: flex;
@@ -81,7 +75,30 @@ body {
   border-radius: 8px;
 }
 
-.panel-row {
+.tabbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  border: none;
+  background: #e8edf8;
+  color: #2d3d5c;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.tab.active {
+  background: #1d4ed8;
+  color: white;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-row, .supplier-layout {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 18px;
@@ -97,7 +114,9 @@ body {
 .product-list,
 .cart-items,
 .inventory-list,
-.summary-list {
+.summary-list,
+.supplier-list,
+.purchase-order-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -106,7 +125,9 @@ body {
 .product-item,
 .cart-item,
 .inventory-item,
-.summary-item {
+.summary-item,
+.supplier-item,
+.purchase-order-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -120,14 +141,18 @@ body {
 .product-item h4,
 .cart-item h4,
 .inventory-item h4,
-.summary-item h4 {
+.summary-item h4,
+.supplier-item h4,
+.purchase-order-item h4 {
   margin: 0 0 4px;
 }
 
 .product-item small,
 .cart-item small,
 .inventory-item small,
-.summary-item small {
+.summary-item small,
+.supplier-item small,
+.purchase-order-item small {
   color: #596882;
 }
 
@@ -219,6 +244,15 @@ body {
   text-align: center;
 }
 
+.badge {
+  background: #e0f2fe;
+  color: #0f172a;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
-  .panel-row, .dashboard-grid { grid-template-columns: 1fr; }
+  .panel-row, .dashboard-grid, .supplier-layout { grid-template-columns: 1fr; }
 }
