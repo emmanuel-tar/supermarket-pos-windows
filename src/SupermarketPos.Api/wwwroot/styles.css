@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supermarket POS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Supermarket POS MVP</h1>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="foh">FOH</button>
+        <button class="tab" data-tab="boh">BOH</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="foh-tab" class="tab-panel active">
+        <div class="panel-row">
+          <div class="panel product-panel">
+            <h2>Products</h2>
+            <div class="toolbar">
+              <input id="product-search" type="text" placeholder="Search products..." />
+            </div>
+            <div id="product-list" class="product-list"></div>
+          </div>
+
+          <div class="panel cart-panel">
+            <h2>Current Sale</h2>
+            <div class="cart-meta">
+              <input id="customer-name" type="text" placeholder="Customer name" />
+              <select id="payment-method">
+                <option>Cash</option>
+                <option>Card</option>
+                <option>Wallet</option>
+              </select>
+            </div>
+            <div id="cart-items" class="cart-items"></div>
+
+            <div class="totals">
+              <div><span>Subtotal</span><strong id="subtotal">0.00</strong></div>
+              <div><span>Tax (8%)</span><strong id="tax">0.00</strong></div>
+              <div class="grand"><span>Total</span><strong id="total">0.00</strong></div>
+            </div>
+
+            <button id="checkout-btn" class="primary-btn">Process Checkout</button>
+            <div id="receipt-output" class="receipt-output"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="boh-tab" class="tab-panel">
+        <div class="dashboard-grid">
+          <div class="metric-box">
+            <label>Total Products</label>
+            <strong id="metric-products">0</strong>
+          </div>
+          <div class="metric-box">
+            <label>Low Stock Items</label>
+            <strong id="metric-low-stock">0</strong>
+          </div>
+          <div class="metric-box">
+            <label>Total Stock</label>
+            <strong id="metric-stock">0</strong>
+          </div>
+          <div class="metric-box">
+            <label>Weekly Sales</label>
+            <strong id="metric-sales">0</strong>
+          </div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel">
+            <h2>Inventory</h2>
+            <div id="inventory-list" class="inventory-list"></div>
+          </div>
+          <div class="panel">
+            <h2>Sales Summary</h2>
+            <div id="summary-list" class="summary-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
